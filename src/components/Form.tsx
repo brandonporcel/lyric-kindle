@@ -1,73 +1,122 @@
 import {
   useEffect,
   useState,
-  type SyntheticEvent,
+  useCallback,
   type ChangeEvent,
+  useRef,
 } from "react";
-import SuggestionItem from "./SuggestionItem";
 import { getRelatedSearch } from "../services/genius.service";
+import type { HitsEntity } from "@/services/types/genius.service.types";
+import SuggestionItem from "./SuggestionItem";
+
 export default function Form() {
   const [prompt, setPrompt] = useState("");
+  const [relatedResults, setRelatedResults] = useState<HitsEntity[]>([]);
+  const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
-  const items = ["banana", "manzana", "pera", "naranja"];
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  async function submit(e: any) {
-    e.preventDefault();
-  }
+  useEffect(() => {
+    // Limpia el timeout cuando el componente se desmonta o cuando se cambia el prompt
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);
 
-  const handlePrompt = (value: ChangeEvent<HTMLInputElement>) => {
-    setPrompt(value.target.value);
-    searchRelatedMusic();
-  };
+  const handlePrompt = useCallback(
+    (value: ChangeEvent<HTMLInputElement>) => {
+      const v = value.target.value;
+      setPrompt(v);
 
-  const searchRelatedMusic = async () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      const newTimeoutId = setTimeout(() => searchRelatedMusic(v), 500);
+      setTimeoutId(newTimeoutId);
+    },
+    [timeoutId]
+  );
+
+  const searchRelatedMusic = async (v: string) => {
     if (prompt.length < 3) {
-      console.log("es menos q 3 ", prompt);
       return;
     }
 
-    const hola = await getRelatedSearch(prompt);
-    console.log(hola);
+    const results = await getRelatedSearch(v);
+    setRelatedResults(results);
+  };
+
+  function clearSearch(e: React.MouseEvent) {
+    console.log("clear?");
+    e.preventDefault();
+    setRelatedResults([]);
+    setPrompt("");
+    inputRef.current?.focus();
+  }
+
+  const handleMusicSelection = (result: HitsEntity) => {};
+
+  const submit = (e: any) => {
+    e.preventDefault();
   };
   return (
     <>
-      <SuggestionItem />
-      <form
-        onSubmit={submit}
-        className="flex h-fit w-full flex-row items-center rounded-xl bg-black px-1 shadow-lg"
-        autoComplete="off"
-      >
-        <input
-          id="input"
-          onChange={handlePrompt}
-          type="text"
-          placeholder="Type an album, song o artist..."
-          className="h-10 w-full resize-none bg-transparent px-2 font-mono text-base text-white placeholder:text-gray-400 sm:text-sm border-0 outline-none ring-0 focus:ring-0 transition-all duration-300"
-          name="prompt"
-        />
-        <button
-          type="submit"
-          aria-disabled="false"
-          id="btttttb"
-          className="flex aspect-square h-8 w-8 items-center justify-center rounded-lg text-white outline-0 ring-0 hover:bg-white/25 focus-visible:bg-white/25"
+      <div className="w-full max-w-md space-y-4 duration-1200 ease-in-out animate-in fade-in slide-in-from-bottom-4">
+        <form
+          onSubmit={submit}
+          className="flex h-fit w-full flex-row items-center rounded-xl bg-black px-1 shadow-lg"
+          autoComplete="off"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-corner-down-left shrink-0 -ml-px"
+          <input
+            ref={inputRef}
+            id="input"
+            onChange={handlePrompt}
+            type="text"
+            value={prompt}
+            placeholder="Type an album, song o artist..."
+            className="h-10 w-full resize-none bg-transparent px-2 font-mono text-base text-white placeholder:text-gray-400 sm:text-sm border-0 outline-none ring-0 focus:ring-0 transition-all duration-300"
+            name="prompt"
+          />
+
+          <button
+            type="button"
+            onClick={(e) => clearSearch(e)}
+            className="flex aspect-square h-8 w-8 items-center justify-center rounded-lg text-white outline-0 ring-0 hover:bg-white/25 focus-visible:bg-white/25"
           >
-            <polyline points="9 10 4 15 9 20"></polyline>
-            <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
-          </svg>
-        </button>
-      </form>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-eraser"
+            >
+              <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21" />
+              <path d="M22 21H7" />
+              <path d="m5 11 9 9" />
+            </svg>
+          </button>
+        </form>
+
+        <ul className="h-80 overflow-y-auto">
+          {relatedResults.map((r) => {
+            return (
+              <SuggestionItem
+                key={r.result.id}
+                result={r}
+                onClick={() => handleMusicSelection(r)}
+              />
+            );
+          })}
+        </ul>
+      </div>
     </>
   );
 }

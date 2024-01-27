@@ -1,43 +1,41 @@
-import { GENIUS_ACCESS_TOKEN } from "@/env";
 import axios from "axios";
-
-interface MusicSuggestion {
-  song?: string;
-  artist: string;
-}
+import type {
+  GeniusSearchResponse,
+  HitsEntity,
+} from "./types/genius.service.types";
 
 const BASE_URI = "https://api.genius.com";
 
 export const getRelatedSearch = async (
   prompt: string
-): Promise<MusicSuggestion[] | any> => {
-  const promptParam = window.encodeURIComponent(
-    prompt.toLocaleLowerCase().trim()
-  );
+): Promise<HitsEntity[]> => {
+  try {
+    const promptParam = prompt.toLocaleLowerCase().trim();
 
-  const params = {
-    q: promptParam,
-  };
+    const url = `${BASE_URI}/search`;
 
-  const url = `${BASE_URI}/search`;
-  //   const accessToken = import.meta.env.GENIUS_ACCESS_TOKEN;
-  const accessToken = GENIUS_ACCESS_TOKEN;
-  const res = await axios.get(url, {
-    params,
-    headers: {
-      //   "User-Agent": "CompuServe Classic/1.22",
-      //   Accept: "application/json",
-      Host: "api.genius.com",
-      Authorization: `Bearer n5IUkpDwm248BpxIsv383hAkTDs3VkYX1J1bX210Ux9yreE2qLh_su1qDcd2FW8c`,
-    },
-  });
+    const accessToken =
+      import.meta.env.GENIUS_ACCESS_TOKEN ??
+      import.meta.env.PUBLIC_GENIUS_ACCESS_TOKEN;
 
-  console.log(res);
-  return res;
+    const params = {
+      q: promptParam,
+      access_token: accessToken,
+    };
 
-  return [
-    {
-      artist: "33",
-    },
-  ];
+    const { data }: { data: GeniusSearchResponse } = await axios.get(url, {
+      params,
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (data.response.hits) {
+      return data.response.hits;
+    }
+    return [];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 };
