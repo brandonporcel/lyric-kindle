@@ -16,7 +16,10 @@ export default function SuggestionItem(params: SuggestionItemParams) {
         <div>
           <img
             className="rounded-full size-8"
-            src={result.header_image_thumbnail_url}
+            src={
+              result.header_image_thumbnail_url ??
+              "https://play-lh.googleusercontent.com/e6-dZlTM-gJ2sFxFFs3X15O84HEv6jc9PQGgHtVTn7FP6lUXeEAkDl9v4RfVOwbSuQ"
+            }
             alt={result.full_title}
           />
         </div>

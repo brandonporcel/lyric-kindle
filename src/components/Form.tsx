@@ -8,16 +8,28 @@ import {
 import { getRelatedSearch } from "../services/genius.service";
 import type { HitsEntity } from "@/services/types/genius.service.types";
 import SuggestionItem from "./SuggestionItem";
+import SelectedResult from "./SelectedResult";
+import PdfPresentation from "./PdfPresentation.tsx";
+import {
+  getPDFTemplate,
+  type ScrapingResponse,
+} from "@/services/backend.service.ts";
 
 export default function Form() {
   const [prompt, setPrompt] = useState("");
+  const [includeAlbums, setIncludeAlbums] = useState(true);
+  const [selectedResult, setSelectedResult] = useState<HitsEntity | null>(null);
+  const [showPdfPresentation, setShowPdfPresentation] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [scrapingResult, setScrapingResult] = useState<ScrapingResponse | null>(
+    null
+  );
   const [relatedResults, setRelatedResults] = useState<HitsEntity[]>([]);
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    // Limpia el timeout cuando el componente se desmonta o cuando se cambia el prompt
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -45,26 +57,60 @@ export default function Form() {
       return;
     }
 
-    const results = await getRelatedSearch(v);
+    const body = { prompt, includeAlbums };
+    const results = await getRelatedSearch(body);
+    console.log("results", results);
     setRelatedResults(results);
   };
 
   function clearSearch(e: React.MouseEvent) {
-    console.log("clear?");
     e.preventDefault();
     setRelatedResults([]);
     setPrompt("");
     inputRef.current?.focus();
   }
 
-  const handleMusicSelection = (result: HitsEntity) => {};
+  const handleMusicSelection = (result: HitsEntity) => {
+    console.log(result);
+    setSelectedResult(result);
+  };
 
   const submit = (e: any) => {
     e.preventDefault();
   };
+
+  const handleGenerateClick = async (selection: HitsEntity): Promise<void> => {
+    try {
+      // setIsGeneratingPdf(true);
+
+      const body = {
+        type: selection.type,
+        artist: selection.result.primary_artist.name,
+        album: selection.result.full_title,
+        url: selection.result.url,
+      };
+
+      // const res = await getPDFTemplate(body);
+      // setScrapingResult(res);
+      const a = await 3;
+      setShowPdfPresentation(true);
+      setScrapingResult({
+        success: true,
+        pdfPath:
+          '\n    <!DOCTYPE html>\n    <html lang="en">\n    <head>\n        <meta charset="UTF-8">\n        <meta name="viewport" content="width=device-width, initial-scale=1.0">\n        <title>Kindle-Genius</title>\n    </head>\n    <body>\n      \n    <h1 font-size="medium" class="SongHeaderdesktop__Title-sc-1effuo1-8 fTHPLE"><span class="SongHeaderdesktop__HiddenMask-sc-1effuo1-11 iMpFIj">Sunny</span></h1><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Letra de “Sunny”]<br><br>[Verso 1]<br>Sunny, solo con mirarte sale el sol<br>Sunny, ni una sola nube entre tu y yo<br>Hoy empiezo a vivir, no me duele el dolor<br>Es que por fin, me llego el amor<br>Esa es la verdad, te quiero<br><br>[Coro]<br>Sunny, gracias por hacerme sonreír<br>Sunny, gracias por tus ganas de vivir<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br><br>[Verso 2]<br>Sunny, has llegado siempre tan puntual<br>Sunny, cuando el corazón marchaba mal<br>Gracias a ti, hoy estoy aquí<br>Dejo al amor, hablar por mi<br>Esa es la verdad, te quiero<br><br>[Interludio Instrumental]<br><br>[Coro]<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br></div><br><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Outro]<br>Sunny, gracias por hacerme tan feliz<br>Sunny, gracias por estar de nuevo aquí<br>Tu me has llevado sin pensar, a los limites del mar<br>Sunny, es la verdad, te quiero</div><br>\n  \n    </body>\n    </html>\n  ',
+      });
+
+      setIsGeneratingPdf(false);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // setIsGeneratingPdf(false);
+    }
+  };
+
   return (
     <>
-      <div className="w-full max-w-md space-y-4 duration-1200 ease-in-out animate-in fade-in slide-in-from-bottom-4">
+      <div className="w-full max-w-md space-y-4 duration-1200 ease-in-out animate-in fade-in slide-in-from-bottom-4 mb-4">
         <form
           onSubmit={submit}
           className="flex h-fit w-full flex-row items-center rounded-xl bg-black px-1 shadow-lg"
@@ -104,8 +150,7 @@ export default function Form() {
             </svg>
           </button>
         </form>
-
-        <ul className="h-80 overflow-y-auto">
+        <ul className="max-h-80 overflow-auto" style={{ margin: 0 }}>
           {relatedResults.map((r) => {
             return (
               <SuggestionItem
@@ -116,6 +161,30 @@ export default function Form() {
             );
           })}
         </ul>
+        <div className="flex items-center">
+          <input
+            id="default-checkbox"
+            type="checkbox"
+            checked={includeAlbums}
+            onChange={() => setIncludeAlbums((includeAlbums) => !includeAlbums)}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          />
+          <label
+            htmlFor="default-checkbox"
+            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >
+            Include albums
+          </label>
+        </div>
+
+        {selectedResult && !isGeneratingPdf && (
+          <SelectedResult
+            data={selectedResult}
+            handleGenerateClick={(selection) => handleGenerateClick(selection)}
+          />
+        )}
+
+        {showPdfPresentation && <PdfPresentation data={scrapingResult} />}
       </div>
     </>
   );
