@@ -13,7 +13,10 @@ function PdfPresentation({ data }: { data: ScrapingResponse | null }) {
         )}
         {data && data.pdfPath && (
           <div className="relative">
-            <div dangerouslySetInnerHTML={{ __html: data.pdfPath }}></div>
+            <div
+              id="lyrics"
+              dangerouslySetInnerHTML={{ __html: data.pdfPath }}
+            ></div>
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white opacity-1 pointer-events-none"></div>
           </div>
         )}

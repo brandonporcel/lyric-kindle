@@ -3,6 +3,8 @@ import Layout from "../layouts/Layout.astro";
 
 import "@/styles/globals.css";
 import Form from "@/components/Form";
+import Test from "@/components/Test";
+import { MyDrawer } from "@/components/MyDrawer";
 import Historial from "@/components/Historial.astro";
 ---
 
@@ -23,7 +25,9 @@ import Historial from "@/components/Historial.astro";
         Enjoy music lyrics and expand knowledge
       </p>
 
+      <!-- <MyDrawer client:load /> -->
       <Form client:load />
+      <!-- <Test client:load /> -->
     </div>
 
     <Historial />

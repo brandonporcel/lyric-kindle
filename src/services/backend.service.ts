@@ -38,3 +38,18 @@ export const getPDFTemplate = async ({
     return null;
   }
 };
+
+type GeneratePdfProps = { template: string; email: string };
+export const generatePdf = async (
+  body: GeneratePdfProps
+): Promise<string | null> => {
+  try {
+    const endpoint = `http://localhost:3000/generate-pdf`;
+    const { data } = await axios.post(endpoint, body);
+
+    return data as string;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};

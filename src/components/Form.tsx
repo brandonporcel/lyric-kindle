@@ -11,9 +11,13 @@ import SuggestionItem from "./SuggestionItem";
 import SelectedResult from "./SelectedResult";
 import PdfPresentation from "./PdfPresentation.tsx";
 import {
+  generatePdf,
   getPDFTemplate,
   type ScrapingResponse,
 } from "@/services/backend.service.ts";
+import { Button } from "./ui/button.tsx";
+import { Input } from "./ui/input.tsx";
+import { Label } from "./ui/label.tsx";
 
 export default function Form() {
   const [prompt, setPrompt] = useState("");
@@ -21,6 +25,7 @@ export default function Form() {
   const [selectedResult, setSelectedResult] = useState<HitsEntity | null>(null);
   const [showPdfPresentation, setShowPdfPresentation] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [email, setEmail] = useState("");
   const [scrapingResult, setScrapingResult] = useState<ScrapingResponse | null>(
     null
   );
@@ -59,7 +64,6 @@ export default function Form() {
 
     const body = { prompt, includeAlbums };
     const results = await getRelatedSearch(body);
-    console.log("results", results);
     setRelatedResults(results);
   };
 
@@ -71,7 +75,6 @@ export default function Form() {
   }
 
   const handleMusicSelection = (result: HitsEntity) => {
-    console.log(result);
     setSelectedResult(result);
   };
 
@@ -79,9 +82,29 @@ export default function Form() {
     e.preventDefault();
   };
 
+  const handleSendPdf = async (e: any) => {
+    e.preventDefault();
+    if (!scrapingResult) return;
+
+    try {
+      const template =
+        '\n    <!DOCTYPE html>\n    <html lang="en">\n    <head>\n        <meta charset="UTF-8">\n        <meta name="viewport" content="width=device-width, initial-scale=1.0">\n        <title>Kindle-Genius</title>\n    </head>\n    <body>\n      \n    <h1 font-size="medium" class="SongHeaderdesktop__Title-sc-1effuo1-8 fTHPLE"><span class="SongHeaderdesktop__HiddenMask-sc-1effuo1-11 iMpFIj">Sunny</span></h1><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Letra de “Sunny”]<br><br>[Verso 1]<br>Sunny, solo con mirarte sale el sol<br>Sunny, ni una sola nube entre tu y yo<br>Hoy empiezo a vivir, no me duele el dolor<br>Es que por fin, me llego el amor<br>Esa es la verdad, te quiero<br><br>[Coro]<br>Sunny, gracias por hacerme sonreír<br>Sunny, gracias por tus ganas de vivir<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br><br>[Verso 2]<br>Sunny, has llegado siempre tan puntual<br>Sunny, cuando el corazón marchaba mal<br>Gracias a ti, hoy estoy aquí<br>Dejo al amor, hablar por mi<br>Esa es la verdad, te quiero<br><br>[Interludio Instrumental]<br><br>[Coro]<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br></div><br><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Outro]<br>Sunny, gracias por hacerme tan feliz<br>Sunny, gracias por estar de nuevo aquí<br>Tu me has llevado sin pensar, a los limites del mar<br>Sunny, es la verdad, te quiero</div><br>\n  \n    </body>\n    </html>\n  ';
+      const body = {
+        // template: scrapingResult.pdfPath,
+        template,
+        email,
+      };
+      const res = await generatePdf(body);
+      clearSearch(e);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleGenerateClick = async (selection: HitsEntity): Promise<void> => {
     try {
-      // setIsGeneratingPdf(true);
+      setIsGeneratingPdf(true);
+      setShowPdfPresentation(true);
 
       const body = {
         type: selection.type,
@@ -89,22 +112,20 @@ export default function Form() {
         album: selection.result.full_title,
         url: selection.result.url,
       };
-
+      const a = await 3;
+      const template =
+        '\n    <!DOCTYPE html>\n    <html lang="en">\n    <head>\n        <meta charset="UTF-8">\n        <meta name="viewport" content="width=device-width, initial-scale=1.0">\n        <title>Kindle-Genius</title>\n    </head>\n    <body>\n      \n    <h1 font-size="medium" class="SongHeaderdesktop__Title-sc-1effuo1-8 fTHPLE"><span class="SongHeaderdesktop__HiddenMask-sc-1effuo1-11 iMpFIj">Sunnyyyyyyyyyyyyyyyyyyy</span></h1><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Letra de “Sunny”]<br><br>[Verso 1]<br>Sunny, solo con mirarte sale el sol<br>Sunny, ni una sola nube entre tu y yo<br>Hoy empiezo a vivir, no me duele el dolor<br>Es que por fin, me llego el amor<br>Esa es la verdad, te quiero<br><br>[Coro]<br>Sunny, gracias por hacerme sonreír<br>Sunny, gracias por tus ganas de vivir<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br><br>[Verso 2]<br>Sunny, has llegado siempre tan puntual<br>Sunny, cuando el corazón marchaba mal<br>Gracias a ti, hoy estoy aquí<br>Dejo al amor, hablar por mi<br>Esa es la verdad, te quiero<br><br>[Interludio Instrumental]<br><br>[Coro]<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br></div><br><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Outro]<br>Sunny, gracias por hacerme tan feliz<br>Sunny, gracias por estar de nuevo aquí<br>Tu me has llevado sin pensar, a los limites del mar<br>Sunny, es la verdad, te quiero</div><br>\n  \n    </body>\n    </html>\n  ';
       // const res = await getPDFTemplate(body);
       // setScrapingResult(res);
-      const a = await 3;
-      setShowPdfPresentation(true);
-      setScrapingResult({
-        success: true,
-        pdfPath:
-          '\n    <!DOCTYPE html>\n    <html lang="en">\n    <head>\n        <meta charset="UTF-8">\n        <meta name="viewport" content="width=device-width, initial-scale=1.0">\n        <title>Kindle-Genius</title>\n    </head>\n    <body>\n      \n    <h1 font-size="medium" class="SongHeaderdesktop__Title-sc-1effuo1-8 fTHPLE"><span class="SongHeaderdesktop__HiddenMask-sc-1effuo1-11 iMpFIj">Sunny</span></h1><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Letra de “Sunny”]<br><br>[Verso 1]<br>Sunny, solo con mirarte sale el sol<br>Sunny, ni una sola nube entre tu y yo<br>Hoy empiezo a vivir, no me duele el dolor<br>Es que por fin, me llego el amor<br>Esa es la verdad, te quiero<br><br>[Coro]<br>Sunny, gracias por hacerme sonreír<br>Sunny, gracias por tus ganas de vivir<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br><br>[Verso 2]<br>Sunny, has llegado siempre tan puntual<br>Sunny, cuando el corazón marchaba mal<br>Gracias a ti, hoy estoy aquí<br>Dejo al amor, hablar por mi<br>Esa es la verdad, te quiero<br><br>[Interludio Instrumental]<br><br>[Coro]<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br></div><br><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Outro]<br>Sunny, gracias por hacerme tan feliz<br>Sunny, gracias por estar de nuevo aquí<br>Tu me has llevado sin pensar, a los limites del mar<br>Sunny, es la verdad, te quiero</div><br>\n  \n    </body>\n    </html>\n  ',
-      });
 
+      setScrapingResult({
+        pdfPath: template,
+        success: true,
+      });
       setIsGeneratingPdf(false);
     } catch (error) {
       console.log(error);
     } finally {
-      // setIsGeneratingPdf(false);
     }
   };
 
@@ -185,6 +206,25 @@ export default function Form() {
         )}
 
         {showPdfPresentation && <PdfPresentation data={scrapingResult} />}
+
+        {!isGeneratingPdf && scrapingResult && (
+          <form onSubmit={handleSendPdf}>
+            <div className="grid w-full items-center gap-1.5 mb-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                required={true}
+                id="email"
+                placeholder="brandon@gmail.com"
+                onChange={(v) => setEmail(v.target.value)}
+                value={email}
+                type="email"
+              />
+            </div>
+            <Button className="w-full" type="submit">
+              Send PDF
+            </Button>
+          </form>
+        )}
       </div>
     </>
   );
