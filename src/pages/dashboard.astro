@@ -1,11 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { type UserData } from "@/types/index";
 import "@/styles/globals.css";
-const { userData }: { userData: UserData } = Astro.locals;
+import type { User } from "@/types";
+const { userData }: { userData: User } = Astro.locals;
 ---
 
 <Layout title="Lyric Kindle">
-  <p>ruta privada</p>
-  <p>{userData.email}</p>
+  <p>Private Route</p>
+  <p>Hi, {userData.info?.full_name}</p>
 </Layout>
