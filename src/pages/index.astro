@@ -2,92 +2,28 @@
 import Layout from "../layouts/Layout.astro";
 
 import "@/styles/globals.css";
-import { Input } from "@/components/ui/input";
 import Form from "@/components/Form";
+import Historial from "@/components/Historial.astro";
+import type { User } from "@/types";
+
+const { userData }: { userData: User } = Astro.locals;
 ---
 
 <Layout title="Lyric Kindle">
-  <main
-    class="mx-auto flex min-h-screen max-w-5xl flex-col items-stretch pb-28 px-4 sm:px-6"
-  >
-    <div
-      class="flex flex-col items-center justify-center py-[15vh] sm:py-[20vh]"
+  <div class="flex flex-col items-center justify-center py-[15vh] sm:py-[20vh]">
+    <h1
+      class="mb-3 text-4xl font-medium text-black duration-1000 ease-in-out animate-in fade-in slide-in-from-bottom-3"
     >
-      <h1
-        class="mb-3 text-4xl font-medium text-black duration-1000 ease-in-out animate-in fade-in slide-in-from-bottom-3"
-      >
-        Generate PDF to your kindle
-      </h1><p
-        class="mb-12 text-base text-gray-500 duration-1200 ease-in-out animate-in fade-in slide-in-from-bottom-4"
-      >
-        Enjoy music lyrics and expand knowledge
-      </p>
+      Generate PDF to your kindle
+    </h1><p
+      class="mb-12 text-base text-gray-500 duration-1200 ease-in-out animate-in fade-in slide-in-from-bottom-4"
+    >
+      Enjoy music lyrics and expand knowledge
+    </p>
 
-      <div
-        class="w-full max-w-md space-y-4 duration-1200 ease-in-out animate-in fade-in slide-in-from-bottom-4"
-      >
-        <Form client:load />
-        <!-- <form
-          method="POST"
-          class="flex h-fit w-full flex-row items-center rounded-xl bg-black px-1 shadow-lg"
-        >
-          <input
-            autocomplete="on"
-            id="input"
-            type="text"
-            placeholder="Type an album, song o artist..."
-            class="h-10 w-full resize-none bg-transparent px-2 font-mono text-base text-white placeholder:text-gray-400 sm:text-sm border-0 outline-none ring-0 focus:ring-0 transition-all duration-300"
-            name="prompt"
-          />
-          <button
-            type="submit"
-            aria-disabled="false"
-            id="btttttb"
-            class="flex aspect-square h-8 w-8 items-center justify-center rounded-lg text-white outline-0 ring-0 hover:bg-white/25 focus-visible:bg-white/25"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-corner-down-left shrink-0 -ml-px"
-              ><polyline points="9 10 4 15 9 20"></polyline><path
-                d="M20 4v7a4 4 0 0 1-4 4H4"></path></svg
-            ></button
-          >
-        </form> -->
-      </div>
-    </div><div
-      class="duration-1200 ease-in-out animate-in fade-in slide-in-from-bottom-4"
-    >
-      <div
-        class="mb-4 flex flex-col flex-nowrap items-center justify-between gap-2 sm:flex-row sm:justify-center"
-      >
-        <h2 class="w-full text-left text-2xl font-semibold">Recent pdf</h2><div
-          class="relative w-full rounded-lg sm:max-w-[260px]"
-        >
-          <Input placeholder="Search..." type="text" />
-        </div>
-      </div>
-      <ul>
-        <li>hola</li>
-        <li>hola2</li>
-      </ul>
-    </div>
-  </main>
+    <Form client:load userInfo={userData?.info} />
+    <!-- <Test client:load /> -->
+  </div>
+
+  <Historial />
 </Layout>
-
-<script>
-  // const d = document;
-  // const input = d.getElementById("input")?.value;
-  // const btn = d.querySelector("#btttttb");
-
-  // btn?.addEventListener("click", (e) => {
-  //   e.preventDefault();
-  //   console.log(input);
-  // });
-</script>

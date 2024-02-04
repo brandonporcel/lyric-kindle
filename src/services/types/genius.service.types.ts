@@ -8,10 +8,12 @@ export interface Meta {
 export interface Response {
   hits?: HitsEntity[] | null;
 }
+export type SuggestionType = "album" | "song";
+
 export interface HitsEntity {
   highlights?: null[] | null;
-  index: string;
-  type: string;
+  index: SuggestionType;
+  type: SuggestionType;
   result: Result;
 }
 export interface Result {
@@ -27,17 +29,17 @@ export interface Result {
   path: string;
   pyongs_count: number;
   relationships_index_url: string;
-  release_date_components: ReleaseDateComponents;
   release_date_for_display: string;
   release_date_with_abbreviated_month_for_display: string;
   song_art_image_thumbnail_url: string;
   song_art_image_url: string;
-  stats: Stats;
   title: string;
   title_with_featured: string;
   url: string;
-  featured_artists?: (FeaturedArtistsEntity | null)[] | null;
+  stats?: Stats;
   primary_artist: PrimaryArtistOrFeaturedArtistsEntity;
+  release_date_components?: ReleaseDateComponents;
+  featured_artists?: (FeaturedArtistsEntity | null)[] | null;
 }
 export interface ReleaseDateComponents {
   year: number;
@@ -62,13 +64,13 @@ export interface FeaturedArtistsEntity {
   iq?: number | null;
 }
 export interface PrimaryArtistOrFeaturedArtistsEntity {
-  api_path: string;
-  header_image_url: string;
   id: number;
   image_url: string;
-  is_meme_verified: boolean;
-  is_verified: boolean;
   name: string;
   url: string;
-  iq: number;
+  header_image_url?: string;
+  is_meme_verified?: boolean;
+  is_verified?: boolean;
+  api_path?: string;
+  iq?: number;
 }

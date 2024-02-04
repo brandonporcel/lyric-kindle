@@ -6,6 +6,8 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const description = "Lyrics Kindle-Genius app";
+const canonicalURL = new URL(Astro.url).href;
 ---
 
 <!doctype html>
@@ -16,7 +18,10 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="author" content="Brandon Porcel" />
+    <meta name="description" content={description} />
     <title>{title}</title>
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
     <link
       rel="icon"
       href="https://images.emojiterra.com/twitter/v14.0/128px/1f5d2.png"
@@ -30,7 +35,11 @@ const { title } = Astro.props;
     >
     </div>
     <Header />
-    <slot />
+    <main
+      class="mx-auto flex min-h-screen max-w-5xl flex-col items-stretch pb-28 px-4 sm:px-6"
+    >
+      <slot />
+    </main>
   </body>
 </html>
 <style is:global>
