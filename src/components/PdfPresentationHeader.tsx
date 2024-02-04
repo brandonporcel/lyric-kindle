@@ -1,6 +1,6 @@
 import type { ScrapingResponse } from "@/services/backend.service";
 
-function PdfPresentationHeader({ data }: { data: ScrapingResponse | null }) {
+function PdfPresentationHeader({}: { data: ScrapingResponse | null }) {
   return (
     <div className="relative flex flex-row flex-nowrap items-center">
       <p className="truncate font-mono sm:text-sm" title="cat">

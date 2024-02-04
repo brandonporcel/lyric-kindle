@@ -95,7 +95,7 @@ export default function Form({ userInfo }: { userInfo: UserInfo | undefined }) {
         template: scrapingResult.pdfPath,
         email,
       };
-      const res = await generatePdf(body);
+      await generatePdf(body);
       clearSearch(e);
     } catch (error) {
       console.log(error);
