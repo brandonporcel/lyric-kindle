@@ -2,10 +2,10 @@ import { c as createAstro, d as createComponent, r as renderTemplate, e as rende
 import 'kleur/colors';
 import 'html-escaper';
 import 'clsx';
-import { $ as $$Layout } from './404_XGhipcPk.mjs';
+import { $ as $$Layout } from './404_dQJiMRcz.mjs';
 /* empty css                              */
 
-const $$Astro = createAstro();
+const $$Astro = createAstro("https://lyric-kindle.vercel.app");
 const $$Dashboard = createComponent(async ($$result, $$props, $$slots) => {
   const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
   Astro2.self = $$Dashboard;

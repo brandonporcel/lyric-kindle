@@ -2,10 +2,11 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 
-import vercelServerless from "@astrojs/vercel/serverless";
+import vercel from "@astrojs/vercel/serverless";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://lyric-kindle-6tqru05ip-brandonporcel.vercel.app/",
   integrations: [
     react(),
     tailwind({
@@ -13,5 +14,5 @@ export default defineConfig({
     }),
   ],
   output: "server",
-  adapter: vercelServerless(),
+  adapter: vercel(),
 });
