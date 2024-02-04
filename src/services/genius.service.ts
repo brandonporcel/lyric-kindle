@@ -59,8 +59,6 @@ export const getRelatedSearchAlbums = async (
   prompt: string
 ): Promise<Album[]> => {
   try {
-    const promptParam = prompt.toLocaleLowerCase().trim();
-
     const url = `${LASTFM_ALBUM_URI}/`;
 
     const apiKey =

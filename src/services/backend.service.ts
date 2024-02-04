@@ -16,9 +16,6 @@ export interface ScrapingResponse {
 const BACKEND_BASE_URI = "https://kindle-genius-docker.onrender.com";
 
 export const getPDFTemplate = async ({
-  type,
-  artist,
-  album,
   url,
 }: GetPDFTemplateProps): Promise<ScrapingResponse | null> => {
   try {
@@ -42,7 +39,7 @@ export const generatePdf = async (
   body: GeneratePdfProps
 ): Promise<string | null> => {
   try {
-    const endpoint = `http://localhost:3000/generate-pdf`;
+    const endpoint = `${BACKEND_BASE_URI}/generate-pdf`;
     const { data } = await axios.post(endpoint, body);
 
     return data as string;

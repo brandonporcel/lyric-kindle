@@ -1,5 +1,5 @@
 import type { HitsEntity } from "@/services/types/genius.service.types";
-import type { User, UserInfo } from "@/types";
+import type { UserInfo } from "@/types";
 import { MyDrawer } from "./MyDrawer";
 
 interface SelectedResultProps {
