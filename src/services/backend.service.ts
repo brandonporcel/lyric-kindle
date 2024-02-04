@@ -22,8 +22,6 @@ export const getPDFTemplate = async ({
   url,
 }: GetPDFTemplateProps): Promise<ScrapingResponse | null> => {
   try {
-    console.log(type, artist, album);
-
     const endpoint = `${BACKEND_BASE_URI}/scrape`;
 
     const body = {

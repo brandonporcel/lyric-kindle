@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { type UserData } from "@/types/index";
+import "@/styles/globals.css";
+const { userData }: { userData: UserData } = Astro.locals;
+---
+
+<Layout title="Lyric Kindle">
+  <p>ruta privada</p>
+  <p>{userData.email}</p>
+</Layout>

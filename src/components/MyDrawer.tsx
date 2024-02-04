@@ -4,12 +4,10 @@ import { Drawer } from "vaul";
 import { Button } from "./ui/button";
 import { Mail } from "lucide-react";
 
-export function MyDrawer() {
+export function MyDrawer({ children }: { children: React.ReactNode }) {
   return (
     <Drawer.Root>
-      <Drawer.Trigger asChild>
-        <button>Open Drawer</button>
-      </Drawer.Trigger>
+      <Drawer.Trigger asChild>{children}</Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
         <Drawer.Content className="fixed bottom-0 left-0 right-0 z-40 mt-24 flex min-h-[50%] flex-col rounded-t-[10px] bg-zinc-100 outline-none">
@@ -18,24 +16,35 @@ export function MyDrawer() {
             <div className="mx-auto max-w-md">
               <div>
                 <h2 id="radix-:R6odaH1:" className="mb-2 text-xl font-medium">
-                  Welcome to AI Emojis
+                  Welcome to lyrics kindle
                 </h2>
                 <p className="mb-6 text-base text-zinc-600">
-                  Sign in for unlimited access, ability to save your emojis, and
-                  access them from any device.
+                  Sign in for unlimited access, ability to save your pdfs, and
+                  more!
                 </p>
-                <div className="flex items-center justify-center sm:justify-start">
-                  <Button className="w-full">
+
+                <form
+                  action="/api/auth/signin"
+                  method="post"
+                  className="flex items-center justify-center sm:justify-start"
+                >
+                  <Button
+                    className="w-full"
+                    type="submit"
+                    value="google"
+                    name="provider"
+                    variant={"secondary"}
+                  >
                     <Mail className="mr-2 h-4" />
                     Login with Google
                   </Button>
-                </div>
+                </form>
+
                 <p className="mt-3 text-center text-xs text-gray-400 sm:text-left">
                   By continuing you agree to our{" "}
                   <a
                     className="text-gray-500 hover:text-gray-900 underline underline-offset-2 transition-colors duration-200 ease-out"
                     target="_blank"
-                    href="/privacy"
                   >
                     Privacy Policy
                   </a>{" "}
@@ -43,7 +52,6 @@ export function MyDrawer() {
                   <a
                     className="text-gray-500 hover:text-gray-900 underline underline-offset-2 transition-colors duration-200 ease-out"
                     target="_blank"
-                    href="/terms"
                   >
                     Terms of Use
                   </a>

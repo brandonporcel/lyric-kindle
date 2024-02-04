@@ -13,7 +13,7 @@ function PdfPresentationHeader({ data }: { data: ScrapingResponse | null }) {
       >
         <button className="group relative inline-flex flex-shrink-0 items-center justify-center select-none truncate transition duration-200 ease-out disabled:pointer-events-auto disabled:opacity-50 bg-white shadow ring-1 ring-gray-200 hover:bg-gray-50 px-2.5 sm:px-2 py-2 h-9 sm:h-8 sm:text-sm rounded-lg font-medium">
           <span className="">
-            <span className="sr-only">Favorite emoji</span>
+            <span className="sr-only">Favorite song</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

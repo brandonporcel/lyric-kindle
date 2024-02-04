@@ -18,19 +18,21 @@ import {
 import { Button } from "./ui/button.tsx";
 import { Input } from "./ui/input.tsx";
 import { Label } from "./ui/label.tsx";
+import type { UserInfo } from "@/types/index.ts";
 
-export default function Form() {
+export default function Form({ userInfo }: { userInfo: UserInfo | undefined }) {
   const [prompt, setPrompt] = useState("");
-  const [includeAlbums, setIncludeAlbums] = useState(true);
+  const [includeAlbums, setIncludeAlbums] = useState(false);
   const [selectedResult, setSelectedResult] = useState<HitsEntity | null>(null);
   const [showPdfPresentation, setShowPdfPresentation] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [isSendingPdf, setIsSendingPdf] = useState(false);
   const [email, setEmail] = useState("");
   const [scrapingResult, setScrapingResult] = useState<ScrapingResponse | null>(
     null
   );
   const [relatedResults, setRelatedResults] = useState<HitsEntity[]>([]);
-  const [timeoutId, setTimeoutId] = useState<number | null>(null);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -57,12 +59,12 @@ export default function Form() {
     [timeoutId]
   );
 
-  const searchRelatedMusic = async (v: string) => {
-    if (prompt.length < 3) {
+  const searchRelatedMusic = async (value: string) => {
+    if (value.length < 3) {
       return;
     }
 
-    const body = { prompt, includeAlbums };
+    const body = { prompt: value, includeAlbums };
     const results = await getRelatedSearch(body);
     setRelatedResults(results);
   };
@@ -71,6 +73,7 @@ export default function Form() {
     e.preventDefault();
     setRelatedResults([]);
     setPrompt("");
+    setSelectedResult(null);
     inputRef.current?.focus();
   }
 
@@ -87,6 +90,7 @@ export default function Form() {
     if (!scrapingResult) return;
 
     try {
+      setIsSendingPdf(true);
       const body = {
         template: scrapingResult.pdfPath,
         email,
@@ -95,6 +99,9 @@ export default function Form() {
       clearSearch(e);
     } catch (error) {
       console.log(error);
+    } finally {
+      setScrapingResult(null);
+      setIsSendingPdf(false);
     }
   };
 
@@ -109,23 +116,31 @@ export default function Form() {
         album: selection.result.full_title,
         url: selection.result.url,
       };
-      const a = await 3;
-      const template =
-        '\n    <!DOCTYPE html>\n    <html lang="en">\n    <head>\n        <meta charset="UTF-8">\n        <meta name="viewport" content="width=device-width, initial-scale=1.0">\n        <title>Kindle-Genius</title>\n    </head>\n    <body>\n      \n    <h1 font-size="medium" class="SongHeaderdesktop__Title-sc-1effuo1-8 fTHPLE"><span class="SongHeaderdesktop__HiddenMask-sc-1effuo1-11 iMpFIj">Sunnyyyyyyyyyyyyyyyyyyy</span></h1><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Letra de “Sunny”]<br><br>[Verso 1]<br>Sunny, solo con mirarte sale el sol<br>Sunny, ni una sola nube entre tu y yo<br>Hoy empiezo a vivir, no me duele el dolor<br>Es que por fin, me llego el amor<br>Esa es la verdad, te quiero<br><br>[Coro]<br>Sunny, gracias por hacerme sonreír<br>Sunny, gracias por tus ganas de vivir<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br><br>[Verso 2]<br>Sunny, has llegado siempre tan puntual<br>Sunny, cuando el corazón marchaba mal<br>Gracias a ti, hoy estoy aquí<br>Dejo al amor, hablar por mi<br>Esa es la verdad, te quiero<br><br>[Interludio Instrumental]<br><br>[Coro]<br>Por entender, por confiar<br>Por discutir, por perdonar<br>Por eso y mucho mas, te quiero<br></div><br><div data-lyrics-container="true" class="Lyrics__Container-sc-1ynbvzw-1 kUgSbL">[Outro]<br>Sunny, gracias por hacerme tan feliz<br>Sunny, gracias por estar de nuevo aquí<br>Tu me has llevado sin pensar, a los limites del mar<br>Sunny, es la verdad, te quiero</div><br>\n  \n    </body>\n    </html>\n  ';
-      // const res = await getPDFTemplate(body);
-      // setScrapingResult(res);
 
-      setScrapingResult({
-        pdfPath: template,
-        success: true,
-      });
-      setIsGeneratingPdf(false);
+      const res = await getPDFTemplate(body);
+      setScrapingResult(res);
     } catch (error) {
       console.log(error);
     } finally {
+      setIsGeneratingPdf(false);
     }
   };
 
+  const [isResultsVisible, setResultsVisible] = useState(false);
+
+  const handleClickOutside = (e: any) => {
+    if (inputRef.current && !inputRef.current.contains(e.target)) {
+      setResultsVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
   return (
     <>
       <div className="w-full max-w-md space-y-4 duration-1200 ease-in-out animate-in fade-in slide-in-from-bottom-4 mb-4">
@@ -143,6 +158,7 @@ export default function Form() {
             placeholder="Type an album, song o artist..."
             className="h-10 w-full resize-none bg-transparent px-2 font-mono text-base text-white placeholder:text-gray-400 sm:text-sm border-0 outline-none ring-0 focus:ring-0 transition-all duration-300"
             name="prompt"
+            onClick={() => setResultsVisible(true)}
           />
 
           <button
@@ -168,17 +184,22 @@ export default function Form() {
             </svg>
           </button>
         </form>
-        <ul className="max-h-80 overflow-auto" style={{ margin: 0 }}>
-          {relatedResults.map((r) => {
-            return (
-              <SuggestionItem
-                key={r.result.id}
-                result={r}
-                onClick={() => handleMusicSelection(r)}
-              />
-            );
-          })}
-        </ul>
+        {isResultsVisible && (
+          <ul className="max-h-80 overflow-auto" style={{ margin: 0 }}>
+            {relatedResults.map((r) => {
+              return (
+                <SuggestionItem
+                  key={r.result.id}
+                  result={r}
+                  onClick={() => {
+                    handleMusicSelection(r);
+                    setResultsVisible(false);
+                  }}
+                />
+              );
+            })}
+          </ul>
+        )}
         <div className="flex items-center">
           <input
             id="default-checkbox"
@@ -194,16 +215,15 @@ export default function Form() {
             Include albums
           </label>
         </div>
-
         {selectedResult && !isGeneratingPdf && (
           <SelectedResult
             data={selectedResult}
+            userInfo={userInfo}
             handleGenerateClick={(selection) => handleGenerateClick(selection)}
           />
         )}
 
         {showPdfPresentation && <PdfPresentation data={scrapingResult} />}
-
         {!isGeneratingPdf && scrapingResult && (
           <form onSubmit={handleSendPdf}>
             <div className="grid w-full items-center gap-1.5 mb-2">
@@ -217,7 +237,7 @@ export default function Form() {
                 type="email"
               />
             </div>
-            <Button className="w-full" type="submit">
+            <Button className="w-full" type="submit" disabled={isSendingPdf}>
               Send PDF
             </Button>
           </form>

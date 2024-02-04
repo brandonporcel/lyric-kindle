@@ -3,7 +3,6 @@ import "../styles/components/pdfPresentation.css";
 import type { ScrapingResponse } from "@/services/backend.service";
 
 function PdfPresentation({ data }: { data: ScrapingResponse | null }) {
-  console.log("data", data);
   return (
     <div className="borders isolate flex w-full flex-col flex-nowrap items-stretch gap-3 rounded-xl bg-white px-3 py-3 shadow-md ring-1 ring-gray-200">
       <PdfPresentationHeader data={data} />
