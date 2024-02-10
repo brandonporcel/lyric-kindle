@@ -1,59 +1,38 @@
-# Astro Starter Kit: Basics
+# Lyrics kindle
 
-```sh
-npm create astro@latest -- --template basics
+Solo funciona en local. Error deploy con astro/vercel 😔
+
+## instalacion 
+```
+npm install
+npm run dev
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+**nota: cambiar backend.service endpooints generatePdf-getPDFTemplate con 'http://localhost:3000/...'**
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+backend: [repo](https://github.com/brandonporcel/kindle-genius/tree/dev)
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+### todo
+- sistema de recomendaciones
+- dark mode
+- obtencion de discos/canciones en español - traduccion
+- conversion de albums ([disponible por consola](https://github.com/brandonporcel/genius-scrap)). parsear nombre de album y artista para enviar a backend https://genius.com/albums/NOMBRE-ARTISTAS-SIN-TILDES/NOMBRE-DE-ALBUM-SIN-TILDES
 
-## 🚀 Project Structure
 
-Inside of your Astro project, you'll see the following folders and files:
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+DEMO:
+![image](https://github.com/brandonporcel/lyric-kindle/assets/66080281/c65ace48-fb55-4158-bfb8-d11873c4599e)
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+![image](https://github.com/brandonporcel/lyric-kindle/assets/66080281/0fa33f07-4e76-4402-bf94-92f96cb1312e)
 
-Any static assets, like images, can be placed in the `public/` directory.
+![image](https://github.com/brandonporcel/lyric-kindle/assets/66080281/10ec2428-238c-4bf7-8dea-6f46c3003fe7)
 
-## 🧞 Commands
+![image](https://github.com/brandonporcel/lyric-kindle/assets/66080281/b93bb4b3-33c4-4fdc-9037-5e1e2380eed9)
 
-All commands are run from the root of the project, from a terminal:
+![image](https://github.com/brandonporcel/lyric-kindle/assets/66080281/d846ac99-62cc-4741-adc0-42e39c164017)
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+![image](https://github.com/brandonporcel/lyric-kindle/assets/66080281/34f38f0b-7fd7-41e4-a92e-58a8e1c3a24d)
 
-## 👀 Want to learn more?
+![image](https://github.com/brandonporcel/lyric-kindle/assets/66080281/d636fa52-96c2-4712-8fca-63a380111a54)
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## 📁 Resources
-
-- [https://bg.ibelick.com/](https://bg.ibelick.com/)
-- [https://flowbite.com/](https://flowbite.com/)
