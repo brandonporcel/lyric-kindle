@@ -1,4 +1,6 @@
-# Lyrics kindle
+# 🗒 Desactualizado. Version actualizada [https://github.com/brandonporcel/kindle-lyrics](https://github.com/brandonporcel/kindle-lyrics)
+
+## Lyrics kindle
 
 Solo funciona en local. Error deploy con astro/vercel 😔
 
